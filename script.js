@@ -1,32 +1,45 @@
+// Navbar HTML template
+const navbarTemplate = `
+<nav class="navbar">
+    <div class="container">
+        <div class="logo">
+            <a href="{base}index.html">
+                <h1>PROJECT <span class="highlight">115</span></h1>
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{base}index.html" data-page="home">Home</a></li>
+            <li><a href="{base}about/index.html" data-page="about">About</a></li>
+            <li><a href="{base}resources/index.html" data-page="resources">Resources</a></li>
+            <li><a href="{base}gallery/index.html" data-page="gallery">Gallery</a></li>
+            <li><a href="{base}contact/index.html" data-page="contact">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+`;
+
 // Load navbar dynamically
-async function loadNavbar() {
+function loadNavbar() {
     const header = document.querySelector('header');
     const navbarDepth = header.getAttribute('data-navbar-depth') || '';
     
-    try {
-        const response = await fetch(navbarDepth + 'navbar.html');
-        const html = await response.text();
-        
-        // Replace {base} with the appropriate path
-        const navbarHtml = html.replace(/{base}/g, navbarDepth);
-        header.innerHTML = navbarHtml;
-        
-        // Set active class based on current page
-        const currentPage = header.getAttribute('data-current-page');
-        if (currentPage) {
-            const links = header.querySelectorAll('.nav-links a');
-            links.forEach(link => {
-                if (link.getAttribute('data-page') === currentPage) {
-                    link.classList.add('active');
-                }
-            });
-        }
-        
-        // Reinitialize navbar scroll behavior
-        initNavbarScroll();
-    } catch (error) {
-        console.error('Error loading navbar:', error);
+    // Replace {base} with the appropriate path
+    const navbarHtml = navbarTemplate.replace(/{base}/g, navbarDepth);
+    header.innerHTML = navbarHtml;
+    
+    // Set active class based on current page
+    const currentPage = header.getAttribute('data-current-page');
+    if (currentPage) {
+        const links = header.querySelectorAll('.nav-links a');
+        links.forEach(link => {
+            if (link.getAttribute('data-page') === currentPage) {
+                link.classList.add('active');
+            }
+        });
     }
+    
+    // Reinitialize navbar scroll behavior
+    initNavbarScroll();
 }
 
 // Initialize navbar scroll behavior
