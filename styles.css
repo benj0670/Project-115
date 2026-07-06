@@ -50,6 +50,16 @@ body {
     padding: 1rem 20px;
 }
 
+.logo a {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.3s ease;
+}
+
+.logo a:hover {
+    opacity: 0.8;
+}
+
 .logo h1 {
     font-size: 1.5rem;
     font-weight: 700;

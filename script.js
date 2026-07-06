@@ -1,18 +1,53 @@
-// Navbar background on scroll
-const navbar = document.querySelector('.navbar');
-let lastScroll = 0;
-
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
+// Load navbar dynamically
+async function loadNavbar() {
+    const header = document.querySelector('header');
+    const navbarDepth = header.getAttribute('data-navbar-depth') || '';
     
-    if (currentScroll > 100) {
-        navbar.style.backgroundColor = 'rgba(10, 14, 15, 0.98)';
-    } else {
-        navbar.style.backgroundColor = 'rgba(10, 14, 15, 0.95)';
+    try {
+        const response = await fetch(navbarDepth + 'navbar.html');
+        const html = await response.text();
+        
+        // Replace {base} with the appropriate path
+        const navbarHtml = html.replace(/{base}/g, navbarDepth);
+        header.innerHTML = navbarHtml;
+        
+        // Set active class based on current page
+        const currentPage = header.getAttribute('data-current-page');
+        if (currentPage) {
+            const links = header.querySelectorAll('.nav-links a');
+            links.forEach(link => {
+                if (link.getAttribute('data-page') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Reinitialize navbar scroll behavior
+        initNavbarScroll();
+    } catch (error) {
+        console.error('Error loading navbar:', error);
     }
+}
+
+// Initialize navbar scroll behavior
+function initNavbarScroll() {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
     
-    lastScroll = currentScroll;
-});
+    let lastScroll = 0;
+    
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll > 100) {
+            navbar.style.backgroundColor = 'rgba(10, 14, 15, 0.98)';
+        } else {
+            navbar.style.backgroundColor = 'rgba(10, 14, 15, 0.95)';
+        }
+        
+        lastScroll = currentScroll;
+    });
+}
 
 // Add animation on scroll for resource cards
 const observerOptions = {
@@ -29,8 +64,12 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observe resource cards
+// Load navbar on page load and initialize animations
 document.addEventListener('DOMContentLoaded', () => {
+    // Load navbar
+    loadNavbar();
+    
+    // Initialize resource card animations
     const cards = document.querySelectorAll('.resource-card, .feature-card');
     cards.forEach((card, index) => {
         card.style.opacity = '0';
